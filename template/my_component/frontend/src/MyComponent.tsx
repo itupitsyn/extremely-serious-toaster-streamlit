@@ -29,6 +29,7 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
         for (let i = 0; i < toasts.length; i += 1) {
           const elem = toasts[i];
           if (elem.id === toastId) {
+            elem.classList.remove("showToast");
             elem.classList.add("hideToast");
             setTimeout(() => toaster.removeChild(elem), 300);
             break;
@@ -43,19 +44,39 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
         const id = Math.random().toString(32);
         newToast.id = id;
 
-        const content = document.createElement("div");
-        content.className = "content";
-        content.innerText = text;
-        newToast.appendChild(content);
-
-        const closeButton = document.createElement("button");
-        closeButton.innerText = "x";
-        closeButton.className = "closeButton";
-        closeButton.addEventListener("click", () => removeToast(id));
-
-        newToast.appendChild(closeButton);
-
+        newToast.innerHTML = \`
+          <div class="shadow">
+            <div style="background-color: #ff26e9; flex-grow: 1"></div>
+            <div style="background-color: #8000ff; flex-grow: 0.75"></div>
+            <div style="background-color: #2656ff; flex-grow: 1"></div>
+          </div>
+          <div class="toast-bg"></div>
+          <div class="toast-content">
+            $\{text}
+          </div>
+          <button type="button" class="closeButton">
+            <svg
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18 17.94 6M18 18 6.06 6"
+              />
+            </svg>
+          </button>
+        \`
+        const button = newToast.querySelector('button');
+        button.addEventListener("click", () => removeToast(id));
         toaster.appendChild(newToast);
+
         // setTimeout(() => removeToast(id), [TOAST_VISIBILITY_DURATION]);
       }
       `
@@ -63,84 +84,121 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
 
       const style = window.parent.document.createElement("style")
       style.innerHTML = `
-      @keyframes showToast {
-        from {
-          opacity: 0;
-          transform: translateX(200%);
+        @keyframes showToast {
+          from {
+            opacity: 0;
+            transform: translateX(200%);
+          }
         }
-      }
-
-      @-webkit-keyframes showToast {
-        from {
-          opacity: 0;
-          transform: translateX(200%);
+        @-webkit-keyframes showToast {
+          from {
+            opacity: 0;
+            transform: translateX(200%);
+          }
         }
-      }
-
-      .toast {
-        animation: showToast 0.3s ease-in-out;
-      }
-
-      @keyframes hideToast {
-        0% {
-          opacity: 100;
+        @keyframes hideToast {
+          0% {
+            opacity: 100;
+          }
+          100% {
+            opacity: 0;
+            transform: translateX(200%);
+          }
         }
-        100% {
-          opacity: 0;
-          transform: translateX(200%);
+        @-webkit-keyframes hideToast {
+          0% {
+            opacity: 100;
+          }
+          100% {
+            opacity: 0;
+            transform: translateX(200%);
+          }
         }
-      }
 
-      @-webkit-keyframes hideToast {
-        0% {
-          opacity: 100;
+        .hideToast {
+          animation: hideToast 0.3s ease-in-out forwards;
         }
-        100% {
-          opacity: 0;
-          transform: translateX(200%);
+        .showToast {
+          animation: showToast 0.3s ease-in-out forwards;
         }
-      }
-
-      .hideToast {
-        animation: hideToast 0.3s ease-in-out forwards;
-      }
-
-      .closeButton {
-        border: 0;
-        background: none;
-        display: block;
-        line-height: 1rem;
-      }
-      .closeButton:hover {
-        cursor: pointer;
-      }
-      .content {
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .toast {
-        padding: 0.5rem;
-        background: rgb(89,195,34);
-        background: linear-gradient(35deg, rgba(89,195,34,1) 0%, rgba(252,253,45,1) 70%);
-        border: 2px solid #8ab32d;
-        border-radius: 4px;
-        box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
-        display: flex;
-        gap: 0.5rem;
-        align-items: flex-start;
-        max-width: 400px;
-        overflow: hidden;
-        color: black;
-      }
-      .toaster {
-        position: fixed;
-        right: 1rem;
-        top: 6rem;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 0.5rem;
-      }
+        .toast {
+          position: relative;
+          padding: 4px;
+          display: flex;
+          gap: 4px;
+          justify-content: space-between;
+          align-items: flex-start;
+          color: white;
+        }
+        .shadow {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: stretch;
+          filter: blur(40px);
+          transform: rotate(7deg);
+          z-index: -1;
+        }
+        .toast-bg {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(35deg, #ff26e9 0%, #2655ff 70%);
+          border-radius: 12px;
+          font-weight: 500;
+          color: black;
+          z-index: -1;
+          filter: blur(3px);
+          margin: 4px;
+        }
+        .toast-content {
+          padding: 16px 0 16px 16px;
+          max-width: 400px;
+          font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .closeButton {
+          border: 0;
+          outline: none;
+          background: none;
+          display: block;
+          margin: 6px 6px 0 0;
+          padding: 0;
+          flex: none;
+          color: inherit;
+          transition: color 150ms;
+        }
+        .closeButton:hover {
+          cursor: pointer;
+          color: #ff26e9;
+        }
+        .closeButton:focus {
+          border: 0;
+          outline: none;
+        }
+        .toaster {
+          position: fixed;
+          right: 1rem;
+          top: 6rem;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 0.5rem;
+        }
+        .toaster a {
+          color: white;
+          }
+        .toaster a:hover {
+          transition: color 150ms;
+          color: #ff26e9;
+        }
       `
       window.parent.document.head.appendChild(style)
     }
