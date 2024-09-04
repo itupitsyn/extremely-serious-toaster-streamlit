@@ -22,8 +22,8 @@ st.subheader("Component with constant args")
 
 # Create an instance of our component with a constant `name` arg, and
 # print its output value.
-if st.button('click me', ):
-    my_component("World")
+if st.button('click me', 123):
+    my_component("<a href='https://www.yandex.ru'>Здравствуйте, а что здеся</a>")
 
 if st.button('click me', 456):
-    my_component("bb")
+    my_component("Курс FX Spot по валютной паре EUR/RUB вырос на 4.05% по итогам последнего дня. <a href='https://www.google.com'>По направлению куда следует!</a>")
