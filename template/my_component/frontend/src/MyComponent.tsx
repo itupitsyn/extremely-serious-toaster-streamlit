@@ -20,8 +20,6 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
 
       const script = window.parent.document.createElement("script")
       script.innerHTML = `
-      const TOAST_VISIBILITY_DURATION = 3000;
-
       function removeToast(toastId) {
         const toaster = document.querySelector(".toaster");
         const toasts = toaster.children;
@@ -37,7 +35,7 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
         }
       }
 
-      function addToast(text) {
+      function addToast(text, maxWidth = 300, time = 0) {
         const toaster = document.querySelector(".toaster");
         const newToast = document.createElement("div");
         newToast.className = "toast showToast";
@@ -51,7 +49,7 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
             <div style="background-color: #2656ff; flex-grow: 1"></div>
           </div>
           <div class="toast-bg"></div>
-          <div class="toast-content">
+          <div class="toast-content" style="max-width:$\{maxWidth}px">
             $\{text}
           </div>
           <button type="button" class="closeButton">
@@ -76,8 +74,7 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
         const button = newToast.querySelector('button');
         button.addEventListener("click", () => removeToast(id));
         toaster.appendChild(newToast);
-
-        // setTimeout(() => removeToast(id), [TOAST_VISIBILITY_DURATION]);
+        if (time) setTimeout(() => removeToast(id), time);
       }
       `
       window.parent.document.head.appendChild(script)
@@ -125,7 +122,7 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
           position: relative;
           padding: 4px;
           display: flex;
-          gap: 4px;
+          gap: 8px;
           justify-content: space-between;
           align-items: flex-start;
           color: white;
@@ -159,7 +156,7 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
         }
         .toast-content {
           padding: 16px 0 16px 16px;
-          max-width: 400px;
+          font-size: 13px;
           font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -169,7 +166,7 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
           outline: none;
           background: none;
           display: block;
-          margin: 6px 6px 0 0;
+          margin: 4px 7px 0 0;
           padding: 0;
           flex: none;
           color: inherit;
@@ -194,7 +191,8 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
         }
         .toaster a {
           color: white;
-          }
+          text-decoration: none;
+        }
         .toaster a:hover {
           transition: color 150ms;
           color: #ff26e9;
@@ -203,7 +201,7 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
       window.parent.document.head.appendChild(style)
     }
     //@ts-ignore
-    window.parent.addToast(args.name)
+    window.parent.addToast(args.name, args.maxWidth, args.time)
 
     const elems = window.parent.document.querySelectorAll("[src*=my_component]")
     elems.forEach((item) => {
@@ -213,7 +211,7 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
     })
   }, [args.name])
 
-  return <div className="kek"></div>
+  return <></>
 }
 
 export default withStreamlitConnection(MyComponent)
