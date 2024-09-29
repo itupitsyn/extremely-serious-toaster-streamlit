@@ -29,13 +29,81 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
           if (elem.id === toastId) {
             elem.classList.remove("showToast");
             elem.classList.add("hideToast");
-            setTimeout(() => toaster.removeChild(elem), 300);
+            setTimeout(() => {
+              try{
+                toaster.removeChild(elem)
+              } catch {
+                ///
+              }
+              if (toaster.children.length === 1) {
+                removeAllToasts();
+              }
+            }, 300);
             break;
           }
         }
       }
 
+      function removeAllToasts() {
+        const toaster = document.querySelector(".toaster");
+        const toasts = toaster.children;
+
+        for (let i = 0; i < toasts.length; i += 1) {
+          const elem = toasts[i];
+          elem.classList.remove("showToast");
+          elem.classList.add("hideToast");
+          setTimeout(() => {
+            try{
+              toaster.removeChild(elem)
+            } catch {
+              ///
+            }
+          }, 300);
+        }
+      }
+
+      function addCloseAllToastsButton() {
+        const toaster = document.querySelector(".toaster");
+        let closeButton = document.querySelector(".closeAllToastsButton");
+        if (closeButton) return;
+
+        closeButton = document.createElement("div");
+        closeButton.className = "closeAllToastsButton showToast";
+
+        closeButton.innerHTML = \`
+          <div class="shadow">
+            <div style="background-color: #ff26e9; flex-grow: 1"></div>
+            <div style="background-color: #8000ff; flex-grow: 0.75"></div>
+            <div style="background-color: #2656ff; flex-grow: 1"></div>
+          </div>
+          <div class="toast-bg" style="border-radius: 999px"></div>
+          <button class="closeButton" style="padding: 10px; margin: 0">
+            <svg
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18 17.94 6M18 18 6.06 6"
+              />
+            </svg>
+          </div>
+        \`
+
+        const button = closeButton.querySelector('button');
+        button.addEventListener("click", removeAllToasts);
+        toaster.append(closeButton);
+      }
+
       function addToast(text, maxWidth = 300, time = 0) {
+        addCloseAllToastsButton();
         const toaster = document.querySelector(".toaster");
         const newToast = document.createElement("div");
         newToast.className = "toast showToast";
@@ -209,7 +277,7 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
         item.parentElement.style.display = "none"
       }
     })
-  }, [args.name])
+  }, [args.maxWidth, args.name, args.time])
 
   return <></>
 }
