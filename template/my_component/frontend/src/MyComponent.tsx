@@ -237,7 +237,7 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
           margin: 4px 7px 0 0;
           padding: 0;
           flex: none;
-          color: inherit;
+          color: white;
           transition: color 150ms;
         }
         .closeButton:hover {
