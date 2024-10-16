@@ -4,20 +4,19 @@ import streamlit.components.v1 as components
 import random
 
 parent_dir = os.path.dirname(os.path.abspath(__file__))
-build_dir = os.path.join(parent_dir, "frontend/build")
-_component_func = components.declare_component("extremely_serious_toaster", path=build_dir)
 
+build_dir = os.path.join(parent_dir, "frontend/toaster_component/build")
+_extemely_serious_toaster_func = components.declare_component("extremely_serious_toaster", path=build_dir)
 def extremely_serious_toaster(name, maxWidth=150, time=0, key=None):
-    component_value = _component_func(name=name, maxWidth=maxWidth, time=time, key=key)
-
-    # We could modify the value returned from the component if we wanted.
-    # There's no need to do this in our simple example - but it's an option.
+    component_value = _extemely_serious_toaster_func(name=name, maxWidth=maxWidth, time=time, key=key)
     return component_value
 
 
-# Add some test code to play with the component while it's in development.
-# During development, we can run this just as we would any other Streamlit
-# app: `$ streamlit run my_component/example.py`
+build_dir = os.path.join(parent_dir, "frontend/close_all_toasts_component/build")
+_close_all_toasts_func = components.declare_component("close_all_toasts", path=build_dir)
+def close_all_toasts(key=None):
+    component_value = _close_all_toasts_func(key=key)
+    return component_value
 
 st.subheader("Component with constant args")
 
@@ -28,3 +27,6 @@ if st.button('click me', 123):
 
 if st.button('click me', 456):
     extremely_serious_toaster("Курс FX Spot по валютной паре EUR/RUB вырос на 4.05% по итогам последнего дня. <a href='https://www.google.com'>По направлению куда следует!</a>", 100, 3000, random.randint(0, 1000))
+
+if st.button('close toasts', 89):
+    close_all_toasts()
