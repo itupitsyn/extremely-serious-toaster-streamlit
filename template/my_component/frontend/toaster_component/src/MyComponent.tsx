@@ -13,9 +13,10 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
     let elem = window.parent.document.querySelector(".toaster")
     if (!elem) {
       elem = window.parent.document.createElement("div")
-      elem.className = "toaster"
+      elem.className = "toaster-container"
       const root = window.parent.document.querySelector("#root")
       if (!root) throw new Error("[error]: toaster (root not found!!)")
+      elem.innerHTML = `<div class="toaster-padding"></div><div class="toaster"></div>`
       root.appendChild(elem)
 
       const script = window.parent.document.createElement("script")
@@ -248,14 +249,27 @@ const MyComponent: FC<ComponentProps> = ({ args }) => {
           border: 0;
           outline: none;
         }
-        .toaster {
+        .toaster-container {
+          scrollbar-gutter: stable;
+          overflow: auto;
+          padding: 5rem 1rem 5rem 0;
           position: fixed;
-          right: 1rem;
-          top: 6rem;
+          right: 0;
+          top: 1rem;
+          max-height: calc(100% - 1rem);
+          display: flex;
+          pointer-events: none;
+        }
+        .toaster-padding {
+          flex-shrink: 0;
+          width: 5rem;
+        }
+        .toaster {
           display: flex;
           flex-direction: column;
           align-items: flex-end;
           gap: 0.5rem;
+          pointer-events: all;
         }
         .toaster a {
           color: white;
